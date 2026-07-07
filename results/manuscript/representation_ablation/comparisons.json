@@ -1,0 +1,30 @@
+{
+  "Pooled15": {
+    "alternative_minus_direct14": -7.00130561108062,
+    "share_months_better": 0.6470588235294118,
+    "ci_2_5": -12.197799331141491,
+    "ci_97_5": -2.0536132161964944,
+    "probability_better": 0.9975
+  },
+  "Direct14_OtherLags": {
+    "alternative_minus_direct14": 6.935782420339709,
+    "share_months_better": 0.37254901960784315,
+    "ci_2_5": -7.7049751780608755,
+    "ci_97_5": 18.947306541783796,
+    "probability_better": 0.1563
+  },
+  "Direct14_SelectedTotalLags": {
+    "alternative_minus_direct14": -1.0587328895950863,
+    "share_months_better": 0.4117647058823529,
+    "ci_2_5": -15.014479666700854,
+    "ci_97_5": 10.33527300802702,
+    "probability_better": 0.5433
+  },
+  "Direct14_OtherAndSelectedLags": {
+    "alternative_minus_direct14": 3.5536363892575595,
+    "share_months_better": 0.39215686274509803,
+    "ci_2_5": -11.688312891258597,
+    "ci_97_5": 15.336245633843133,
+    "probability_better": 0.2878
+  }
+}

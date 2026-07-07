@@ -1,0 +1,104 @@
+\section{Representation Ablation and Robustness Results}
+\label{app:robustness-results}
+
+This appendix reports supporting analyses for the main empirical findings. The purpose is to document robustness and mechanism checks using experiments already completed in the project. No additional research question is introduced here.
+
+\subsection{Representation ablation: auxiliary-series versus predictor representations}
+\label{app:representation-ablation}
+
+The representation ablation compares the auxiliary-series representation used in the main analysis with predictor representations of the same residual information. The baseline is Direct14, which forecasts the 14 observed brand series without the residual. The residual-aggregation specification, denoted Pooled15, represents the aggregated residual as an auxiliary series in the pooled training panel. The predictor representations instead add lagged aggregate information directly to the predictors of the observed brand series.
+
+\begin{table}[!htbp]
+\centering
+\caption{Representation ablation for the 14-brand setting}
+\label{tab:representation-ablation}
+\begin{tabular}{lrrrr}
+\hline
+Specification & MAE & RMSE & sMAPE & $\Delta$MAE vs Direct14 \\
+\hline
+Direct14 & 303.08 & 595.26 & 0.425 & -- \\
+Pooled15: residual as auxiliary series & 296.08 & 573.94 & 0.419 & -7.00 \\
+Direct14 + selected-total lags & 302.03 & 603.89 & 0.427 & -1.06 \\
+Direct14 + residual lags & 310.02 & 615.42 & 0.435 & 6.94 \\
+Direct14 + residual and selected-total lags & 306.64 & 614.29 & 0.430 & 3.55 \\
+\hline
+\end{tabular}
+\end{table}
+
+The ablation supports the interpretation adopted in the Discussion. Representing the residual as an auxiliary series improves forecasting relative to Direct14, whereas introducing lagged residual information as predictors does not reproduce the same gains. Adding lagged selected-total information yields only a small improvement, and combining selected-total and residual predictors does not match the auxiliary-series representation. These results indicate that residual aggregation is not simply enriching the predictor set with additional residual information; it changes the system representation available to the global forecasting model.
+
+\subsection{Alternative accuracy metrics}
+\label{app:alternative-metrics}
+
+The main analysis reports MAE because the experiments use an absolute-error objective and because MAE is directly interpretable in units of vehicle registrations. Table~\ref{tab:alternative-metrics} reports the corresponding RMSE and sMAPE results for the same Top-\(K\) coverage ladder.
+
+\begin{table}[!htbp]
+\centering
+\caption{Alternative accuracy metrics across the coverage ladder}
+\label{tab:alternative-metrics}
+\begin{tabular}{rrrrrrr}
+\hline
+\(K\) & \multicolumn{3}{c}{RMSE} & \multicolumn{3}{c}{sMAPE} \\
+\cline{2-4}\cline{5-7}
+ & DirectK & DirectK+Residual & Improvement & DirectK & DirectK+Residual & Improvement \\
+\hline
+5  & 937.61 & 868.61 & 69.00 & 0.488 & 0.473 & 0.015 \\
+8  & 764.92 & 693.64 & 71.28 & 0.441 & 0.428 & 0.013 \\
+10 & 702.81 & 657.15 & 45.65 & 0.424 & 0.416 & 0.009 \\
+12 & 645.48 & 626.07 & 19.41 & 0.424 & 0.421 & 0.003 \\
+14 & 600.37 & 574.39 & 25.98 & 0.424 & 0.419 & 0.004 \\
+\hline
+\end{tabular}
+\end{table}
+
+The qualitative conclusions are consistent with the MAE analysis. Across all examined coverage levels, the residual-aggregation model has lower RMSE and lower sMAPE than the corresponding DirectK baseline. The magnitude of improvement varies across the coverage ladder, with larger improvements at lower-to-intermediate coverage levels and smaller improvements at higher coverage levels.
+
+\subsection{Complete placebo robustness}
+\label{app:complete-placebo}
+
+The placebo experiments compare the authentic residual with auxiliary series that remove or alter the information content of the residual. Table~\ref{tab:single-placebo-mae} reports the single-run placebo MAE results. The authentic residual is labelled Real residual. Lower values indicate better forecast accuracy.
+
+\begin{table}[!htbp]
+\centering
+\caption{Single-run placebo robustness: MAE by coverage level}
+\label{tab:single-placebo-mae}
+\begin{tabular}{rrrrrr}
+\hline
+\(K\) & DirectK & Real residual & Shuffled residual & Synthetic residual & Duplicate auxiliary \\
+\hline
+5  & 585.53 & 565.48 & 568.51 & 544.53 & 588.13 \\
+8  & 434.19 & 413.91 & 426.46 & 431.77 & 436.66 \\
+10 & 384.84 & 373.31 & 370.40 & 387.08 & 389.66 \\
+12 & 342.68 & 337.58 & 336.92 & 340.69 & 343.13 \\
+14 & 303.97 & 298.38 & 304.61 & 307.11 & 305.53 \\
+\hline
+\end{tabular}
+\end{table}
+
+The single-run placebo results show that the authentic residual is not uniformly dominant at every coverage level. This is consistent with the main interpretation that residual aggregation can operate through both information completion and auxiliary-task regularization. At \(K=8\) and \(K=14\), the authentic residual outperforms all placebo auxiliary series. At \(K=5\), the synthetic residual performs best, consistent with the view that very low coverage may increase the role of generic auxiliary-series effects.
+
+Table~\ref{tab:multiseed-placebo} reports the multi-seed validation for the shuffled and synthetic placebo conditions. Positive values indicate that the placebo has higher MAE than the authentic residual, so that the authentic residual performs better.
+
+\begin{table}[!htbp]
+\centering
+\caption{Multi-seed placebo robustness}
+\label{tab:multiseed-placebo}
+\begin{tabular}{rlrrr}
+\hline
+\(K\) & Placebo & Mean placebo $-$ real MAE & 5--95\% seed range & Real wins \\
+\hline
+5  & Shuffled  & 3.56  & [-7.29,\;13.87]  & 80\% \\
+5  & Synthetic & 11.67 & [-14.93,\;31.08] & 80\% \\
+8  & Shuffled  & 13.50 & [7.05,\;19.38]   & 100\% \\
+8  & Synthetic & 19.34 & [8.34,\;28.67]   & 100\% \\
+10 & Shuffled  & 7.20  & [2.62,\;11.73]   & 95\% \\
+10 & Synthetic & 11.52 & [1.32,\;19.09]   & 95\% \\
+12 & Shuffled  & 1.15  & [-1.73,\;5.18]   & 65\% \\
+12 & Synthetic & 2.67  & [-2.25,\;6.81]   & 80\% \\
+14 & Shuffled  & 3.49  & [0.08,\;6.58]    & 95\% \\
+14 & Synthetic & 6.50  & [2.66,\;10.87]   & 100\% \\
+\hline
+\end{tabular}
+\end{table}
+
+The multi-seed results support the robustness of the mechanism-identification findings. The authentic residual consistently outperforms both shuffled and synthetic placebos at \(K=8\), and the evidence is also strong at \(K=10\) and \(K=14\). Evidence is weaker at \(K=12\), while \(K=5\) shows positive but less stable differences. Together with the duplicate auxiliary comparison, these results support the conclusion that residual aggregation is not explained solely by adding another training series, while also indicating that auxiliary-task regularization can contribute in some coverage settings.

@@ -1,0 +1,86 @@
+[
+  {
+    "K": 5,
+    "selected_brands": [
+      "Volkswagen",
+      "Toyota",
+      "Tesla",
+      "Volvo",
+      "BMW"
+    ],
+    "initial_training_coverage": 0.4511478254459644,
+    "full_sample_coverage_descriptive": 0.48027840917535863
+  },
+  {
+    "K": 8,
+    "selected_brands": [
+      "Volkswagen",
+      "Toyota",
+      "Tesla",
+      "Volvo",
+      "BMW",
+      "Nissan",
+      "Audi",
+      "Skoda"
+    ],
+    "initial_training_coverage": 0.6173496508014135,
+    "full_sample_coverage_descriptive": 0.632259163325944
+  },
+  {
+    "K": 10,
+    "selected_brands": [
+      "Volkswagen",
+      "Toyota",
+      "Tesla",
+      "Volvo",
+      "BMW",
+      "Nissan",
+      "Audi",
+      "Skoda",
+      "Hyundai",
+      "Mercedes-Benz"
+    ],
+    "initial_training_coverage": 0.7097269513433343,
+    "full_sample_coverage_descriptive": 0.7207627349268287
+  },
+  {
+    "K": 12,
+    "selected_brands": [
+      "Volkswagen",
+      "Toyota",
+      "Tesla",
+      "Volvo",
+      "BMW",
+      "Nissan",
+      "Audi",
+      "Skoda",
+      "Hyundai",
+      "Mercedes-Benz",
+      "Peugeot",
+      "Ford"
+    ],
+    "initial_training_coverage": 0.7805918716478142,
+    "full_sample_coverage_descriptive": 0.7821698761671335
+  },
+  {
+    "K": 14,
+    "selected_brands": [
+      "Volkswagen",
+      "Toyota",
+      "Tesla",
+      "Volvo",
+      "BMW",
+      "Nissan",
+      "Audi",
+      "Skoda",
+      "Hyundai",
+      "Mercedes-Benz",
+      "Peugeot",
+      "Ford",
+      "Kia",
+      "Mazda"
+    ],
+    "initial_training_coverage": 0.830193751402947,
+    "full_sample_coverage_descriptive": 0.8244450330670526
+  }
+]

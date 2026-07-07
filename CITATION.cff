@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the manuscript."
+title: "When and Why Does Residual Aggregation Improve Global Forecasting under Partial Market Coverage?"
+authors:
+  - family-names: "Ja_gu"
+version: "0.1.0"
+date-released: "2026-07-07"
+license: "MIT"
+preferred-citation:
+  type: article
+  title: "When and Why Does Residual Aggregation Improve Global Forecasting under Partial Market Coverage?"
+  authors:
+    - family-names: "Ja_gu"
+  year: 2026
+  notes: "Manuscript in preparation."

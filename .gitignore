@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Local dependency caches and legacy workspace material
+work/
+outputs/
+results/reproduced/*
+!results/reproduced/.gitkeep
+figures/reproduced/*
+!figures/reproduced/.gitkeep
+
+# Raw/licensed data
+data/raw/*.xlsx
+data/raw/*.xls
+data/raw/*.csv
+data/processed/monthly_market_series.csv
+
+# Temporary files
+*.log
+*.tmp
+~$*
+.DS_Store
+Thumbs.db

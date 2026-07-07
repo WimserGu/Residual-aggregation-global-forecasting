@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "residual-aggregation-forecasting"
+version = "0.1.0"
+description = "Reproduction code for residual aggregation under partial market coverage."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Ja_gu"}]
+
+[tool.setuptools.packages.find]
+where = ["src"]
