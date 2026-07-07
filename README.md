@@ -56,7 +56,7 @@ data/processed/monthly_market_series.csv
 Required columns:
 
 | Column | Description |
-| --- | --- |
+| :--- | :--- |
 | `date` | Monthly timestamp, formatted as the first day of the month. |
 | `brand` | One of the 14 observed manuscript brands. |
 | `sales` | Monthly passenger-vehicle registrations for the observed brand. |
@@ -89,7 +89,7 @@ data/raw/All_indicators.xlsx
 Expected sheet names and columns:
 
 | File | Sheet | Required columns |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | `Norway_monthly_car_sale.xlsx` | `Sheet2` | `Brand`, `Sales`, `date` |
 | `All_indicators.xlsx` | `Ark1` | `Month`, `market_size` |
 
@@ -119,13 +119,21 @@ Python 3.10 or newer is recommended. The development environment used Python 3.1
 
 ```bash
 python -m venv .venv
+```
 
-# Windows PowerShell
+Windows PowerShell:
+
+```text
 .\.venv\Scripts\Activate.ps1
+```
 
-# macOS/Linux
+macOS/Linux:
+
+```bash
 source .venv/bin/activate
+```
 
+```bash
 pip install -r requirements.txt
 pip install -e .
 ```
@@ -189,7 +197,7 @@ Files under `results/manuscript/` and `figures/manuscript/` are archived manuscr
 The repository uses the following placebo labels consistently:
 
 | Label | Meaning |
-| --- | --- |
+| :--- | :--- |
 | `ShuffledResidual` | Authentic residual values randomly permuted within the training window. |
 | `SyntheticResidual` | Synthetic AR(1)-style series matched to basic residual properties. |
 | `DuplicateAuxiliary` | A duplicated observed series selected deterministically within each fold. |
