@@ -1,4 +1,4 @@
-"""Create compact manuscript tables from experiment outputs."""
+"""Create compact reproducibility tables from experiment outputs."""
 
 from __future__ import annotations
 
@@ -58,7 +58,7 @@ def main() -> None:
                 "ShuffledResidual": "Shuffled residual",
                 "SyntheticResidual": "Synthetic residual",
                 "DuplicateAuxiliary": "Duplicated auxiliary series",
-                "ObservedBrandAggregate": "Observed-brand aggregate",
+                "ObservedBrandAggregate": "ObservedBrandAggregate",
             }
         )
         placebo.to_csv(args.output_dir / "table_placebo_robustness.csv", index=False)

@@ -60,6 +60,6 @@ Use `python scripts/run_all_experiments.py --skip-placebos` for a quick workflow
 
 ## Scope
 
-The public-release workflow reproduces the final residual-aggregation paper.
+The public-release workflow reproduces the final residual-aggregation manuscript.
 Earlier exploratory market-structure experiments are intentionally excluded from
 the clean reproduction path.
