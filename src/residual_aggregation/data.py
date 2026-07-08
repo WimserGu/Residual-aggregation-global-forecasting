@@ -17,6 +17,9 @@ from .config import BRANDS, BRAND, DATE, MARKET_SIZE, TARGET
 
 def load_processed(path: Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load processed data and return wide sales, shares, and monthly market data."""
+    if not path.exists():
+        raise FileNotFoundError(f"Processed data file not found: {path}")
+
     frame = pd.read_csv(path)
     required = {DATE, BRAND, TARGET, MARKET_SIZE}
     missing = required.difference(frame.columns)
@@ -27,6 +30,10 @@ def load_processed(path: Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame
     frame = frame.sort_values([DATE, BRAND]).reset_index(drop=True)
     if frame.duplicated([DATE, BRAND]).any():
         raise ValueError("Processed data contain duplicate brand-month rows.")
+    if frame.groupby(DATE)[MARKET_SIZE].nunique().gt(1).any():
+        raise ValueError("market_size must be constant across brands within each month.")
+    if (frame[[TARGET, MARKET_SIZE]] < 0).any().any():
+        raise ValueError("sales and market_size must be non-negative.")
 
     wide = frame.pivot(index=DATE, columns=BRAND, values=TARGET).reindex(columns=BRANDS)
     if wide[BRANDS].isna().any().any():
@@ -39,17 +46,33 @@ def load_processed(path: Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame
         .reset_index(drop=True)
     )
     market = monthly.set_index(DATE)[MARKET_SIZE]
+    if (market <= 0).any():
+        raise ValueError("market_size must be positive for every month.")
     shares = wide.div(market, axis=0)
+    if not np.isfinite(shares.to_numpy(dtype=float)).all():
+        raise ValueError("Computed market shares contain non-finite values.")
     return wide.sort_index(), shares.sort_index(), monthly
 
 
 def prepare_from_excel(sales_path: Path, indicators_path: Path, output_path: Path) -> pd.DataFrame:
     """Create the processed CSV from the original Excel files, when available."""
+    if not sales_path.exists():
+        raise FileNotFoundError(f"Sales workbook not found: {sales_path}")
+    if not indicators_path.exists():
+        raise FileNotFoundError(f"Indicator workbook not found: {indicators_path}")
+
     sales = pd.read_excel(sales_path, sheet_name="Sheet2")
     indicators = pd.read_excel(indicators_path, sheet_name="Ark1")
 
     sales = sales.rename(columns={"Brand": BRAND, "Sales": TARGET, "date": DATE})
     indicators = indicators.rename(columns={"Month": DATE})
+    sales_missing = {BRAND, TARGET, DATE}.difference(sales.columns)
+    indicators_missing = {DATE, MARKET_SIZE}.difference(indicators.columns)
+    if sales_missing:
+        raise ValueError(f"Sales workbook is missing required columns: {sorted(sales_missing)}")
+    if indicators_missing:
+        raise ValueError(f"Indicator workbook is missing required columns: {sorted(indicators_missing)}")
+
     sales[DATE] = pd.to_datetime(sales[DATE])
     indicators[DATE] = pd.to_datetime(indicators[DATE])
 
@@ -57,6 +80,8 @@ def prepare_from_excel(sales_path: Path, indicators_path: Path, output_path: Pat
         raise ValueError("Duplicate brand-month rows found in sales file.")
     if indicators.duplicated([DATE]).any():
         raise ValueError("Duplicate monthly rows found in indicator file.")
+    if (sales[TARGET] < 0).any() or (indicators[MARKET_SIZE] <= 0).any():
+        raise ValueError("Raw sales must be non-negative and market_size must be positive.")
 
     monthly = indicators[[DATE, MARKET_SIZE]].copy()
     processed = sales[[DATE, BRAND, TARGET]].merge(monthly, on=DATE, how="left", validate="many_to_one")

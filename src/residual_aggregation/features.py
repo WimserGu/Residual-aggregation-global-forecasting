@@ -10,6 +10,9 @@ from .config import DATE
 
 def component_sales_features(wide: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
     """Construct lag, rolling-mean, seasonal, and component-identity features."""
+    wide = wide.copy()
+    wide.index.name = DATE
+    wide.columns.name = "brand"
     long = (
         wide.stack()
         .rename("component_sales")

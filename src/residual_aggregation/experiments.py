@@ -25,6 +25,14 @@ from .model import lgb_predict, metric_row
 
 def selected_brands(shares: pd.DataFrame, k: int, initial_months: list[pd.Timestamp]) -> list[str]:
     """Select the K largest brands by average share in the initial training window."""
+    if k < 1 or k > len(BRANDS):
+        raise ValueError(f"k must be between 1 and {len(BRANDS)}; got {k}.")
+    if not initial_months:
+        raise ValueError("initial_months must not be empty.")
+    missing_months = [month for month in initial_months if month not in shares.index]
+    if missing_months:
+        raise ValueError(f"Initial training months are missing from shares index: {missing_months[:3]}")
+
     ranking = shares.loc[initial_months, BRANDS].mean().sort_values(ascending=False)
     return ranking.head(k).index.tolist()
 
@@ -35,6 +43,10 @@ def fit_predict_components(
     test_months: list[pd.Timestamp],
 ) -> pd.DataFrame:
     """Run one-step rolling-origin forecasts for a component panel."""
+    missing_components = [component for component in ordered_components if component not in wide.columns]
+    if missing_components:
+        raise ValueError(f"Component panel is missing requested components: {missing_components}")
+
     feature_df, features = component_sales_features(wide[ordered_components])
     rows = []
     for test_month in test_months:
@@ -42,6 +54,11 @@ def fit_predict_components(
             subset=features + ["component_sales"]
         )
         test = feature_df[feature_df[DATE] == test_month].dropna(subset=features)
+        missing_test_components = sorted(set(ordered_components).difference(test["component"]))
+        if missing_test_components:
+            raise ValueError(
+                f"Test month {test_month.date()} is missing feature-complete rows for: {missing_test_components}"
+            )
         test = test.set_index("component").loc[ordered_components].reset_index()
         prediction = np.maximum(lgb_predict(train, test, features, "component_sales"), 0.0)
         rows.append(
@@ -61,6 +78,10 @@ def run_coverage_ladder(data_path: Path, output_dir: Path) -> None:
     """Run DirectK and DirectK+Residual models across the Top-K coverage ladder."""
     full_wide, shares, monthly = load_processed(data_path)
     months = sorted(pd.Timestamp(v) for v in full_wide.index)
+    if len(months) <= TEST_START_INDEX:
+        raise ValueError(
+            f"At least {TEST_START_INDEX + 1} months are required; found {len(months)}."
+        )
     initial_months = months[:TEST_START_INDEX]
     test_months = months[TEST_START_INDEX:]
     market = monthly.set_index(DATE)[MARKET_SIZE].sort_index()
@@ -149,6 +170,13 @@ def placebo_series(
     seed: int,
 ) -> pd.Series:
     """Construct one auxiliary placebo series for a rolling-origin fold."""
+    if residual_train.empty:
+        raise ValueError("residual_train must not be empty.")
+    if len(train_months) != len(residual_train):
+        raise ValueError("train_months and residual_train must have the same length.")
+    if not selected:
+        raise ValueError("selected must contain at least one brand.")
+
     values = residual_train.to_numpy(dtype=float)
     if kind == "ShuffledResidual":
         rng = np.random.default_rng(seed)
@@ -186,6 +214,8 @@ def predict_auxiliary(
     all_months = list(direct_wide.index)
     for fold, test_month in enumerate(test_months):
         train_months = [month for month in all_months if month < test_month]
+        if not train_months:
+            raise ValueError(f"No training months available before test month {test_month}.")
         generated = placebo_series(
             kind,
             residual.loc[train_months],
@@ -204,6 +234,12 @@ def predict_auxiliary(
         test = feature_df[
             (feature_df[DATE] == test_month) & feature_df["component"].isin(selected)
         ].dropna(subset=features)
+        missing_test_components = sorted(set(selected).difference(test["component"]))
+        if missing_test_components:
+            raise ValueError(
+                f"Test month {test_month.date()} is missing feature-complete selected rows for: "
+                f"{missing_test_components}"
+            )
         test = test.set_index("component").loc[selected].reset_index()
         prediction = np.maximum(lgb_predict(train, test, features, "component_sales"), 0.0)
         rows.append(

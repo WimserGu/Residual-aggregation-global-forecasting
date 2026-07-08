@@ -26,6 +26,11 @@ def paired_bootstrap(
     """Bootstrap paired monthly MAE differences for two models."""
     subset = monthly[(monthly["K"] == k) & monthly["model"].isin([left, right])]
     pivot = subset.pivot(index=DATE, columns="model", values="ae").dropna()
+    if pivot.empty:
+        raise ValueError(f"No paired monthly errors available for K={k}, {left} vs {right}.")
+    if left not in pivot.columns or right not in pivot.columns:
+        raise ValueError(f"Both models must be present for paired bootstrap: {left}, {right}.")
+
     diff = (pivot[right] - pivot[left]).to_numpy(dtype=float)
     rng = np.random.default_rng(seed + k + sum(ord(c) for c in right))
     samples = rng.choice(diff, size=(reps, len(diff)), replace=True).mean(axis=1)

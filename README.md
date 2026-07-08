@@ -113,6 +113,17 @@ python scripts/prepare_processed_data.py --synthetic-sample --output data/proces
 
 This checks that the workflow executes, but it does **not** reproduce the manuscript's numerical results.
 
+## Automated Checks
+
+The repository includes lightweight tests for data-schema validation, leakage-safe lag construction, deterministic Top-K brand selection, and metric edge cases. To run them locally:
+
+```bash
+pip install -e ".[test]"
+pytest
+```
+
+The GitHub Actions smoke-test workflow runs these tests and verifies that a schema-compatible synthetic sample can be generated. The workflow is intentionally lightweight and does not rerun the full manuscript experiments.
+
 ## Installation
 
 Python 3.10 or newer is recommended. The development environment used Python 3.12.13.

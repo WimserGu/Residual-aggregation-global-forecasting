@@ -13,6 +13,9 @@ import sys
 from pathlib import Path
 
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
 def run(command: list[str]) -> None:
     """Run one Python command and stop if it fails."""
     print(" ".join(command), flush=True)
@@ -38,13 +41,31 @@ def main() -> None:
     placebo_dir = args.results_dir / "placebos_multiseed"
     tables_dir = args.results_dir / "tables"
 
-    run([python, "scripts/run_coverage_ladder.py", "--data", str(args.data), "--output-dir", str(coverage_dir)])
-    run([python, "scripts/run_representation_ablation.py", "--data", str(args.data), "--output-dir", str(ablation_dir)])
+    run(
+        [
+            python,
+            str(REPO_ROOT / "scripts" / "run_coverage_ladder.py"),
+            "--data",
+            str(args.data),
+            "--output-dir",
+            str(coverage_dir),
+        ]
+    )
+    run(
+        [
+            python,
+            str(REPO_ROOT / "scripts" / "run_representation_ablation.py"),
+            "--data",
+            str(args.data),
+            "--output-dir",
+            str(ablation_dir),
+        ]
+    )
     if not args.skip_placebos:
         run(
             [
                 python,
-                "scripts/run_placebos.py",
+                str(REPO_ROOT / "scripts" / "run_placebos.py"),
                 "--data",
                 str(args.data),
                 "--coverage-predictions",
@@ -53,8 +74,26 @@ def main() -> None:
                 str(placebo_dir),
             ]
         )
-    run([python, "scripts/make_tables.py", "--results-dir", str(args.results_dir), "--output-dir", str(tables_dir)])
-    run([python, "scripts/make_figures.py", "--results-dir", str(args.results_dir), "--output-dir", str(args.figures_dir)])
+    run(
+        [
+            python,
+            str(REPO_ROOT / "scripts" / "make_tables.py"),
+            "--results-dir",
+            str(args.results_dir),
+            "--output-dir",
+            str(tables_dir),
+        ]
+    )
+    run(
+        [
+            python,
+            str(REPO_ROOT / "scripts" / "make_figures.py"),
+            "--results-dir",
+            str(args.results_dir),
+            "--output-dir",
+            str(args.figures_dir),
+        ]
+    )
 
 
 if __name__ == "__main__":
